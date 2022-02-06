@@ -6,6 +6,18 @@ from sql_queries import *
 
 
 def process_song_file(cur, filepath):
+    '''
+    Processes the `song` data files, and inserts the data in two table:
+    `songs` and `artists`, which will contain meta data about these two objects.
+
+        Parameters:
+            cur: a psycopg2 cursor which will execute the inserts in the posgres tables.
+            filepath: the path to the `songs` data files.
+        Returns:
+            None: no returns
+    '''
+
+
     # open song file
     df = pd.read_json(filepath,lines=True)
 
@@ -19,6 +31,19 @@ def process_song_file(cur, filepath):
 
 
 def process_log_file(cur, filepath):
+    '''
+    Processes the log data files, filters the data by `NextSong` action.
+    Converts the data milliseconds data into more granular Pandas time format.
+    From the logs will create the dimention table `user` and the fact table `songplay`  
+
+        Parameters:
+            cur: a psycopg2 cursor which will execute the inserts in the posgres tables.
+            filepath: the path to the log data files.
+        Returns:
+            None: no returns
+    '''
+
+
     # open log file
     df = pd.read_json(filepath,lines=True)
 
@@ -66,6 +91,17 @@ def process_log_file(cur, filepath):
 
 
 def process_data(cur, conn, filepath, func):
+    '''
+    Will process all the files in directory path by iterating through them and 
+    call `process_log_file` and `process_song_file` to insert the data in the adequate tables
+
+        Parameters:
+            cur: a psycopg2 cursor which will execute the inserts in the posgres tables.
+            conn: a psycopg2 connection to the Posgres database
+            filepath: the path to each respective data file  
+            func: the function to process the files and insertion
+    '''
+
     # get all files matching extension from directory
     all_files = []
     for root, dirs, files in os.walk(filepath):
